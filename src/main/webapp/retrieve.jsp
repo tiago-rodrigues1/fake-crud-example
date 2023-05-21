@@ -9,40 +9,51 @@
 
 <%
 	Aluno aluno = new Aluno();
-	boolean encontrado = false;
+	int statusCode = -1;
 	
 	String nomeQuery = request.getParameter("nome");
-
-	for(Aluno a : Turma.alunos) {
-		String nome = a.getNome();
-		
-		if (nome.equals(nomeQuery)) {
-			aluno = a;
-			encontrado = true;
-			break;
+	
+	if (nomeQuery != null) {
+		for(Aluno a : Turma.alunos) {
+			String nome = a.getNome();
+			
+			if (nome.equals(nomeQuery)) {
+				aluno = a;
+				statusCode = 1;
+				break;
+			}
+			
+			statusCode = 0;
 		}
 	}
 %>
 
 <body>
-	<h1>
-		<%= encontrado ? "Aluno encontrado" : "Aluno não encontrado" %>
-	</h1>
-	<% if (encontrado) { %>
-		<table border="1">
-			<tr>
-				<th>ID</th>
-				<th>Nome</th>
-				<th>Turma</th>
-				<th>IRA</th>
-			</tr>
-			<tr>
-				<td><%= aluno.getId() %></td>
-				<td><%= aluno.getNome() %></td>
-				<td><%= aluno.getTurma() %></td>
-				<td><%= aluno.getIra() %></td>
-			</tr>
-		</table>
+	<% if (statusCode < 0) { %>
+		<form action="retrieve.jsp" method="get">
+			Nome do aluno<input name="nome" />
+			<input type="submit" value="Buscar">
+		</form>
+	<% } else { %>
+		<h1>
+			<%= statusCode > 0 ? "Aluno encontrado" : "Aluno não encontrado" %>
+		</h1>
+		<% if (statusCode > 0) { %>
+			<table border="1">
+				<tr>
+					<th>ID</th>
+					<th>Nome</th>
+					<th>Turma</th>
+					<th>IRA</th>
+				</tr>
+				<tr>
+					<td><%= aluno.getId() %></td>
+					<td><%= aluno.getNome() %></td>
+					<td><%= aluno.getTurma() %></td>
+					<td><%= aluno.getIra() %></td>
+				</tr>
+			</table>
+		<% } %>
 	<% } %>
 	<a href="index.jsp">Voltar</a>
 </body>

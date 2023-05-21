@@ -8,26 +8,38 @@
 </head>
 
 <%
-	boolean encontrado = false;
+	int statusCode = -1;
 	
 	String nomeQuery = request.getParameter("nome");
-	int novoIra = Integer.parseInt(request.getParameter("ira"));
+	String novoIra = request.getParameter("ira");
 
-	for(Aluno a : Turma.alunos) {
-		String nome = a.getNome();
-		
-		if (nome.equals(nomeQuery)) {
-			a.setIra(novoIra);
-			encontrado = true;
-			break;
+	if (nomeQuery != null && novoIra != null ) {
+		for(Aluno a : Turma.alunos) {
+			String nome = a.getNome();
+			
+			if (nome.equals(nomeQuery)) {
+				a.setIra(Integer.parseInt(novoIra));
+				statusCode = 1;
+				break;
+			}
+			
+			statusCode = 0;
 		}
 	}
 %>
 
 <body>
-	<h1>
-		<%= encontrado ? "Aluno atualizado com sucesso!" : "Aluno não encontrado" %>
-	</h1>
+	<% if (statusCode < 0) { %>
+		<form action="update.jsp" method="get">
+			Nome do aluno <input name="nome"><br>
+			Novo IRA <input name="ira"><br>
+			<input type="submit" value="atualizar">
+		</form>
+	<% } else { %>
+		<h1>
+			<%= statusCode > 0 ? "Aluno atualizado com sucesso!" : "Aluno não encontrado" %>
+		</h1>
+	<% } %>
 	<a href="index.jsp">Voltar</a>
 	<span>|</span>
 	<a href="listar.jsp">Listar alunos</a>
